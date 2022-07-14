@@ -1236,7 +1236,7 @@ static void modeline(struct window *wp)
 			lp = lforw(lp);
 		}
 		/* column isn't always correct, but idc */
-		sprintf(pos, " (%i:%i) ", line_num, wp->w_doto);
+		sprintf(pos, " (%i:%i) ", line_num + 1, wp->w_doto + 1);
 		vtcol = n - 14 - strlen(pos);
 		
 		cp = pos;
