@@ -1227,7 +1227,7 @@ static void modeline(struct window *wp)
 		char pos[27]; /* pretty big */
 		/* get line number */
 		struct line *lp;
-		int line_num;
+		int line_num, col_num;
 
 		lp = lforw(bp->b_linep);
 		line_num = 0;
@@ -1235,8 +1235,18 @@ static void modeline(struct window *wp)
 			++line_num;
 			lp = lforw(lp);
 		}
+		/* get column number */
+		col_num = 0;
+		for (int i = 0; i < wp->w_doto; i++) {
+			if (wp->w_dotp->l_text[i] == '\t') {
+				/* TODO: this should be changable at runtime */
+				col_num += 8;
+			} else {
+				++col_num;
+			}
+		}
 		/* column isn't always correct, but idc */
-		sprintf(pos, " (%i:%i) ", line_num + 1, wp->w_doto + 1);
+		sprintf(pos, " (%i:%i) ", line_num + 1, col_num + 1);
 		vtcol = n - 14 - strlen(pos);
 		
 		cp = pos;
