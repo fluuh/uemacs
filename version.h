@@ -9,4 +9,6 @@
 /* Print the version string. */
 void version(void);
 
+extern const char *progname;
+
 #endif  /* VERSION_H_ */

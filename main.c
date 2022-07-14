@@ -90,8 +90,8 @@ extern void sizesignal(int);
 
 void usage(int status)
 {
-  printf("Usage: %s filename\n", PROGRAM_NAME);
-  printf("   or: %s [options]\n\n", PROGRAM_NAME);
+  printf("Usage: %s filename\n", progname);
+  printf("   or: %s [options]\n\n", progname);
   fputs("      +          start at the end of file\n", stdout);
   fputs("      +<n>       start at line <n>\n", stdout);
   fputs("      -g[G]<n>   go to line <n>\n", stdout);
@@ -139,6 +139,10 @@ int main(int argc, char **argv)
 	signal(SIGWINCH, sizesignal);
 #endif
 #endif
+	if (argc > 0) {	
+		progname = argv[0];
+	}
+	
 	if (argc == 2) {
 		if (strcmp(argv[1], "--help") == 0) {
 			usage(EXIT_FAILURE);
