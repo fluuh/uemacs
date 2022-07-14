@@ -298,6 +298,8 @@ int update(int force)
 		if (wp->w_flag) {
 			/* if the window has changed, service it */
 			reframe(wp);	/* check the framing */
+			/* update modeline to make sure column/line is always correct */
+			modeline(wp);
 #if SCROLLCODE
 			if (wp->w_flag & (WFKILLS | WFINS)) {
 				scrflags |=
@@ -314,7 +316,6 @@ int update(int force)
 #else
 			if (wp->w_flag & WFMODE)
 #endif
-				modeline(wp);	/* update modeline */
 			wp->w_flag = 0;
 			wp->w_force = 0;
 		}
@@ -1122,6 +1123,8 @@ static void modeline(struct window *wp)
 	n = 2;
 
 	strcpy(tline, " ");
+	strcat(tline, itoa(wp->w_doto));
+	strcat(tline, " ");
 	strcat(tline, PROGRAM_NAME_LONG);
 	strcat(tline, " ");
 	strcat(tline, VERSION);
