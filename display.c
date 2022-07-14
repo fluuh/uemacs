@@ -1236,11 +1236,12 @@ static void modeline(struct window *wp)
 			lp = lforw(lp);
 		}
 		/* get column number */
+		/* TODO: this should be changable at runtime */
+		int tab_size = 8;
 		col_num = 0;
 		for (int i = 0; i < wp->w_doto; i++) {
 			if (wp->w_dotp->l_text[i] == '\t') {
-				/* TODO: this should be changable at runtime */
-				col_num += 8;
+				col_num += tab_size - (i % tab_size);
 			} else {
 				++col_num;
 			}
