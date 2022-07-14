@@ -1123,19 +1123,14 @@ static void modeline(struct window *wp)
 	n = 2;
 
 	strcpy(tline, " ");
-	strcat(tline, itoa(wp->w_doto));
-	strcat(tline, " ");
-	strcat(tline, PROGRAM_NAME_LONG);
-	strcat(tline, " ");
-	strcat(tline, VERSION);
-	strcat(tline, ": ");
-	cp = &tline[0];
-	while ((c = *cp++) != 0) {
-		vtputc(c);
-		++n;
+	/* file name */
+	if(wp->w_bufp->b_fname[0] == 0) {
+		strcat(tline, "<unnamed>");
+	} else {
+		strcat(tline, wp->w_bufp->b_fname);
 	}
-
-	cp = &bp->b_bname[0];
+	strcat(tline, " -");
+	cp = &tline[0];
 	while ((c = *cp++) != 0) {
 		vtputc(c);
 		++n;
@@ -1162,32 +1157,6 @@ static void modeline(struct window *wp)
 	cp = &tline[0];
 	while ((c = *cp++) != 0) {
 		vtputc(c);
-		++n;
-	}
-
-#if	PKCODE
-	if (bp->b_fname[0] != 0 && strcmp(bp->b_bname, bp->b_fname) != 0)
-#else
-	if (bp->b_fname[0] != 0)	/* File name. */
-#endif
-	{
-#if	PKCODE == 0
-		cp = "File: ";
-
-		while ((c = *cp++) != 0) {
-			vtputc(c);
-			++n;
-		}
-#endif
-
-		cp = &bp->b_fname[0];
-
-		while ((c = *cp++) != 0) {
-			vtputc(c);
-			++n;
-		}
-
-		vtputc(' ');
 		++n;
 	}
 
@@ -1248,6 +1217,29 @@ static void modeline(struct window *wp)
 		}
 
 		cp = msg;
+		while ((c = *cp++) != 0) {
+			vtputc(c);
+			++n;
+		}
+	}
+	
+	{ /* print cursor position */
+		char pos[27]; /* pretty big */
+		/* get line number */
+		struct line *lp;
+		int line_num;
+
+		lp = lforw(bp->b_linep);
+		line_num = 0;
+		while (lp != wp->w_dotp) {
+			++line_num;
+			lp = lforw(lp);
+		}
+		/* column isn't always correct, but idc */
+		sprintf(pos, " (%i:%i) ", line_num, wp->w_doto);
+		vtcol = n - 14 - strlen(pos);
+		
+		cp = pos;
 		while ((c = *cp++) != 0) {
 			vtputc(c);
 			++n;
